@@ -1,6 +1,5 @@
---set search_path='dev2Testing';
+set search_path='hotel_db';
 
-/*
 -- ****Create Tables**** -- 
 
 -- Create HotelChain Table Query with Primary Keys, Foreign Keys and Constraints
@@ -201,6 +200,34 @@ CREATE TABLE Renting (
   CONSTRAINT check_occupants CHECK (number_of_occupants > 0)
 );
 
+
+-- Create Functions and Triggers 
+
+--Function that updates number of hotels in hotelChain:
+
+CREATE FUNCTION update_number_of_hotels()
+RETURNS TRIGGER AS
+$BODY$
+BEGIN
+
+UPDATE HotelChain  
+SET number_of_hotels = (SELECT count(*)
+FROM Hotel H WHERE H.id = id);
+
+RETURN NEW;
+END
+
+$BODY$ LANGUAGE plpgsql;
+
+
+--Trigger that runs before a hotel instance is deleted. Calls above function.
+
+CREATE TRIGGER number_of_hotels_trigger 
+AFTER UPDATE ON Hotel
+EXECUTE PROCEDURE update_number_of_hotels();
+
+
+
 ----- Populate Tables -----
 
 -- HotelChain Table 
@@ -229,14 +256,14 @@ VALUES
 
 (6,'Intercontinental Ottawa',1,'intercontinentalOttawa@gmail.com','1 Rideau Street','Ottawa','Ontario','K1N 8S7',5,'613-241-1414',4),
 (7,'Intercontinental Toronto',1,'intercontinentalToronto@gmail.com','12 Yonge Street','Toronto','Ontario','K2T 8J2',5,'416-210-1515',4),
-(8,'Intercontinental Vancouver',1,'intercontinentalVancouver@gmail.com','75 Commercial Street','Vancouver','British Columbia','K2F 3S6',353,'604-101-1010',4),
+(8,'Intercontinental Vancouver',1,'intercontinentalVancouver@gmail.com','75 Commercial Street','Vancouver','British Columbia','K2F 3S6',5,'604-101-1010',4),
 (9,'Intercontinental Calgary',1,'intercontinentalCalgary@gmail.com','1 Ave SW','Calgary', 'Alberta','K1N 3J7',5,'403-301-0011',4),
 (10,'Intercontinental Montreal',1,'intercontinentalMontreal@gmail.com','1 Old Montreal Street','Montreal','Quebec','K1N 3G7',5,'514-201-1200',4),
 (11,'Intercontinental Winnipeg',1,'intercontinentalWinnipeg@gmail.com','5 Joy Street','Winnipeg','Manitoba','K1H 8F7',5,'204-555-3535',4),
 
 (12,'Four Seasons Ottawa',2,'fsOttawa@gmail.com','1 Rideau Street','Ottawa','Ontario','K1N 8S7',5,'613-241-1414',3),
 (13,'Four Seasons Toronto',2,'fsToronto@gmail.com','12 Yonge Street','Toronto','Ontario','K2T 8J2',5,'416-210-1515',3),
-(14,'Four Seasons Vancouver',2,'fsVancouver@gmail.com','75 Commercial Street','Vancouver','British Columbia','K2F 3S6',353,'604-101-1010',3),
+(14,'Four Seasons Vancouver',2,'fsVancouver@gmail.com','75 Commercial Street','Vancouver','British Columbia','K2F 3S6',5,'604-101-1010',3),
 (15,'Four Seasons Calgary',2,'fsCalgary@gmail.com','1 Ave SW','Calgary', 'Alberta','K1N 3J7',5,'403-301-0011',3),
 (16,'Four Seasons Montreal',2,'fsMontreal@gmail.com','1 Old Montreal Street','Montreal','Quebec','K1N 3G7',5,'514-201-1200',3),
 (17,'Four Seasons Winnipeg',2,'fsWinnipeg@gmail.com','5 Joy Street','Winnipeg','Manitoba','K1H 8F7',5,'204-555-3535',3),
@@ -244,7 +271,7 @@ VALUES
 
 (18,'Holiday Inn Ottawa',3,'holidayInnOttawa@gmail.com','1 Rideau Street','Ottawa','Ontario','K1N 8S7',5,'613-241-1414',3),
 (19,'Holiday Inn Toronto',3,'holidayInnToronto@gmail.com','12 Yonge Street','Toronto','Ontario','K2T 8J2',5,'416-210-1515',3),
-(20,'Holiday Inn Vancouver',3,'holidayInnVancouver@gmail.com','75 Commercial Street','Vancouver','British Columbia','K2F 3S6',353,'604-101-1010',3),
+(20,'Holiday Inn Vancouver',3,'holidayInnVancouver@gmail.com','75 Commercial Street','Vancouver','British Columbia','K2F 3S6',5,'604-101-1010',3),
 (21,'Holiday Inn Calgary',3,'holidayInnCalgary@gmail.com','1 Ave SW','Calgary', 'Alberta','K1N 3J7',5,'403-301-0011',3),
 (22,'Holiday Inn Montreal',3,'holidayInnMontreal@gmail.com','1 Old Montreal Street','Montreal','Quebec','K1N 3G7',5,'514-201-1200',3),
 (23,'Holiday Inn Winnipeg',3,'holidayInnWinnipeg@gmail.com','5 Joy Street','Winnipeg','Manitoba','K1H 8F7',5,'204-555-3535',3),
@@ -252,7 +279,7 @@ VALUES
 
 (24,'Westin Ottawa',4,'WestinOttawa@gmail.com','1 Rideau Street','Ottawa','Ontario','K1N 8S7',5,'613-241-1414',4),
 (25,'Westin Toronto',4,'WestinToronto@gmail.com','12 Yonge Street','Toronto','Ontario','K2T 8J2',5,'416-210-1515',4),
-(26,'Westin Vancouver',4,'WestinVancouver@gmail.com','75 Commercial Street','Vancouver','British Columbia','K2F 3S6',353,'604-101-1010',4),
+(26,'Westin Vancouver',4,'WestinVancouver@gmail.com','75 Commercial Street','Vancouver','British Columbia','K2F 3S6',5,'604-101-1010',4),
 (27,'Westin Calgary',4,'WestinCalgary@gmail.com','1 Ave SW','Calgary', 'Alberta','K1N 3J7',5,'403-301-0011',4),
 (28,'Westin Montreal',4,'WestinMontreal@gmail.com','1 Old Montreal Street','Montreal','Quebec','K1N 3G7',5,'514-201-1200',4),
 (29,'Westin Winnipeg',4,'WestinWinnipeg@gmail.com','5 Joy Street','Winnipeg','Manitoba','K1H 8F7',5,'204-555-3535',4);
@@ -482,7 +509,7 @@ VALUES
 (146, FALSE, FALSE, TRUE, TRUE, FALSE, '{}'),
 (147, FALSE, FALSE, TRUE, TRUE, TRUE, '{}'),
 (148, TRUE, FALSE, TRUE, TRUE, TRUE, '{}'),
-(149, TRUE, TRUE, TRUE, TRUE, TRUE, '{}')
+(149, TRUE, TRUE, TRUE, TRUE, TRUE, '{}');
 
 -- HotelRoom Table 
 
@@ -667,7 +694,7 @@ VALUES
 (146, 29, 200, FALSE, TRUE, FALSE, 2,146),
 (147, 29, 500, FALSE, TRUE, FALSE, 3,147),
 (148, 29, 1000, FALSE, TRUE, FALSE, 4,148),
-(149, 29, 2000, FALSE, TRUE, FALSE, 5,149)
+(149, 29, 2000, FALSE, TRUE, FALSE, 5,149);
 
 
 -- Availability Table 
@@ -853,7 +880,7 @@ VALUES
 (146, 29, 146, TRUE),
 (147, 29, 147, TRUE),
 (148, 29, 148, TRUE),
-(149, 29, 149, TRUE)
+(149, 29, 149, TRUE);
 
 -- Cutomer Table
 
@@ -864,7 +891,7 @@ VALUES
   (1, 'Jan', 'Doe', '2004-10-19 10:23:54+02', 'King Edward Avenue', 'Ottawa', 'Ontario', 'B7C 0S8', 140, 'Visa', '1918-1987-7432-0281', 3, 2023), 
   (2, 'Mike', 'Edward', '2004-10-19 10:23:54+02', 'Quebec Street', 'Monterial', 'Quebec', 'A6D 6J8', 610, 'Mastercard', '3434-8678-1260-1183', 2, 2025), 
   (3, 'Judy', 'Green', '2004-10-19 10:23:54+02', 'Yonge Street', 'Toronto', 'Ontario', 'K2H 9F5', 019, 'Visa', '6286-0479-1781-9559', 5, 2022), 
-  (6, 'Chandler', 'Rose', '2021-03-07', '17 Street', 'Edmonton', 'Alberta', 'X6V 9P7', 213, 'Mastercard', '3525-5956-3738-2829', 7, 2024)
+  (6, 'Chandler', 'Rose', '2021-03-07', '17 Street', 'Edmonton', 'Alberta', 'X6V 9P7', 213, 'Mastercard', '3525-5956-3738-2829', 7, 2024);
 
 -- BookingInfo Table 
 
@@ -907,7 +934,7 @@ VALUES
   (633880892, 1, '2021-03-06', 'Double', 300, '2021-03-08', '2021-03-20', 2, 12, 26, 135), 
   (571458382, 2, '2021-03-07', 'Triple', 400, '2021-03-18', '2021-03-20', 3, 2, 27, 140),
   (741110002, 3, '2021-03-09', 'King', 700, '2021-03-12', '2021-03-15', 2, 3, 28, 145),
-  (783345852, 6, '2021-03-15', 'Queen', 600, '2021-03-16', '2021-03-20', 2, 4, 29, 150)
+  (783345852, 6, '2021-03-15', 'Queen', 600, '2021-03-16', '2021-03-20', 2, 4, 29, 149);
 
 -- Renting Table
 
@@ -950,32 +977,17 @@ VALUES
   (633880892, 1, '2021-03-06', 'Double', 300, '2021-03-08', '2021-03-20', 2, 12, 26, 135, NULL), 
   (571458382, 2, '2021-03-07', 'Triple', 400, '2021-03-18', '2021-03-20', 3, 2, 27, 140, NULL),
   (741110002, 3, '2021-03-09', 'King', 700, '2021-03-12', '2021-03-15', 2, 3, 28, 145, NULL),
-  (783345852, 6, '2021-03-15', 'Queen', 600, '2021-03-16', '2021-03-20', 2, 4, 29, 150, 783345852)
+  (783345852, 6, '2021-03-15', 'Queen', 600, '2021-03-16', '2021-03-20', 2, 4, 29, 149, 783345852);
   
-  
-  
-  
+
 ----- Example of Commonly used Queries -----
-
 ----- Update Address Query -----
-
 -- Update Customer set street='NEW_STREET', city='NEW_CITY', province='NEW_PROVINCE', zipCode='NEW_ZIPCODE' where id=customer_id
-
 ----- Update Booking Check IN Date Query -----
-
 -- Update BookingInfo set check_in_date='2021-03-05' where confirmation_number=CONFIRMATION_NUM
-
 ----- Update Check Out Date Query -----
-
 -- Update Renting set check_out_date='2021-03-05' where confirmation_number=CONFIRMATION_NUM
-
-
 ----- Modifications -----
 --alter table customer add  CONSTRAINT check_province CHECK (province in ('British Columbia','Alberta','Saskatchewan','Manitoba','Ontario','Quebec','New Brunswick','Newfoundland and Labrador','Nova Scotia','Prince Edward Island','Nunavut','Northwest Territories','Yukon'));
 --Alter Table customer Alter Column card_number Type BIGINT;
 
-**/
-
-
-
-  
