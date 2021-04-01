@@ -201,4 +201,29 @@ CREATE TABLE Renting (
 );
 
 
-  
+-- Create Functions and Triggers 
+
+--Function that updates number of hotels in hotelChain:
+
+CREATE FUNCTION update_number_of_hotels()
+RETURNS TRIGGER AS
+$BODY$
+BEGIN
+
+UPDATE HotelChain  
+SET number_of_hotels = (SELECT count(*)
+FROM Hotel H WHERE H.id = id);
+
+RETURN NEW;
+END
+
+$BODY$ LANGUAGE plpgsql;
+
+
+--Trigger that runs before a hotel instance is deleted. Calls above function.
+
+CREATE TRIGGER number_of_hotels_trigger 
+AFTER UPDATE ON Hotel
+EXECUTE PROCEDURE update_number_of_hotels();
+
+
