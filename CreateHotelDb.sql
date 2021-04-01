@@ -1,6 +1,5 @@
-set search_path='dev2Testing';
+set search_path='hotel_db';
 
-/*
 -- ****Create Tables**** -- 
 
 -- Create HotelChain Table Query with Primary Keys, Foreign Keys and Constraints
@@ -201,7 +200,5 @@ CREATE TABLE Renting (
   CONSTRAINT check_occupants CHECK (number_of_occupants > 0)
 );
 
-
-**/
 
   
