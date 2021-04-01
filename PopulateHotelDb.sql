@@ -26,14 +26,14 @@ VALUES
 
 (6,'Intercontinental Ottawa',1,'intercontinentalOttawa@gmail.com','1 Rideau Street','Ottawa','Ontario','K1N 8S7',5,'613-241-1414',4),
 (7,'Intercontinental Toronto',1,'intercontinentalToronto@gmail.com','12 Yonge Street','Toronto','Ontario','K2T 8J2',5,'416-210-1515',4),
-(8,'Intercontinental Vancouver',1,'intercontinentalVancouver@gmail.com','75 Commercial Street','Vancouver','British Columbia','K2F 3S6',353,'604-101-1010',4),
+(8,'Intercontinental Vancouver',1,'intercontinentalVancouver@gmail.com','75 Commercial Street','Vancouver','British Columbia','K2F 3S6',5,'604-101-1010',4),
 (9,'Intercontinental Calgary',1,'intercontinentalCalgary@gmail.com','1 Ave SW','Calgary', 'Alberta','K1N 3J7',5,'403-301-0011',4),
 (10,'Intercontinental Montreal',1,'intercontinentalMontreal@gmail.com','1 Old Montreal Street','Montreal','Quebec','K1N 3G7',5,'514-201-1200',4),
 (11,'Intercontinental Winnipeg',1,'intercontinentalWinnipeg@gmail.com','5 Joy Street','Winnipeg','Manitoba','K1H 8F7',5,'204-555-3535',4),
 
 (12,'Four Seasons Ottawa',2,'fsOttawa@gmail.com','1 Rideau Street','Ottawa','Ontario','K1N 8S7',5,'613-241-1414',3),
 (13,'Four Seasons Toronto',2,'fsToronto@gmail.com','12 Yonge Street','Toronto','Ontario','K2T 8J2',5,'416-210-1515',3),
-(14,'Four Seasons Vancouver',2,'fsVancouver@gmail.com','75 Commercial Street','Vancouver','British Columbia','K2F 3S6',353,'604-101-1010',3),
+(14,'Four Seasons Vancouver',2,'fsVancouver@gmail.com','75 Commercial Street','Vancouver','British Columbia','K2F 3S6',5,'604-101-1010',3),
 (15,'Four Seasons Calgary',2,'fsCalgary@gmail.com','1 Ave SW','Calgary', 'Alberta','K1N 3J7',5,'403-301-0011',3),
 (16,'Four Seasons Montreal',2,'fsMontreal@gmail.com','1 Old Montreal Street','Montreal','Quebec','K1N 3G7',5,'514-201-1200',3),
 (17,'Four Seasons Winnipeg',2,'fsWinnipeg@gmail.com','5 Joy Street','Winnipeg','Manitoba','K1H 8F7',5,'204-555-3535',3),
@@ -41,7 +41,7 @@ VALUES
 
 (18,'Holiday Inn Ottawa',3,'holidayInnOttawa@gmail.com','1 Rideau Street','Ottawa','Ontario','K1N 8S7',5,'613-241-1414',3),
 (19,'Holiday Inn Toronto',3,'holidayInnToronto@gmail.com','12 Yonge Street','Toronto','Ontario','K2T 8J2',5,'416-210-1515',3),
-(20,'Holiday Inn Vancouver',3,'holidayInnVancouver@gmail.com','75 Commercial Street','Vancouver','British Columbia','K2F 3S6',353,'604-101-1010',3),
+(20,'Holiday Inn Vancouver',3,'holidayInnVancouver@gmail.com','75 Commercial Street','Vancouver','British Columbia','K2F 3S6',5,'604-101-1010',3),
 (21,'Holiday Inn Calgary',3,'holidayInnCalgary@gmail.com','1 Ave SW','Calgary', 'Alberta','K1N 3J7',5,'403-301-0011',3),
 (22,'Holiday Inn Montreal',3,'holidayInnMontreal@gmail.com','1 Old Montreal Street','Montreal','Quebec','K1N 3G7',5,'514-201-1200',3),
 (23,'Holiday Inn Winnipeg',3,'holidayInnWinnipeg@gmail.com','5 Joy Street','Winnipeg','Manitoba','K1H 8F7',5,'204-555-3535',3),
@@ -49,7 +49,7 @@ VALUES
 
 (24,'Westin Ottawa',4,'WestinOttawa@gmail.com','1 Rideau Street','Ottawa','Ontario','K1N 8S7',5,'613-241-1414',4),
 (25,'Westin Toronto',4,'WestinToronto@gmail.com','12 Yonge Street','Toronto','Ontario','K2T 8J2',5,'416-210-1515',4),
-(26,'Westin Vancouver',4,'WestinVancouver@gmail.com','75 Commercial Street','Vancouver','British Columbia','K2F 3S6',353,'604-101-1010',4),
+(26,'Westin Vancouver',4,'WestinVancouver@gmail.com','75 Commercial Street','Vancouver','British Columbia','K2F 3S6',5,'604-101-1010',4),
 (27,'Westin Calgary',4,'WestinCalgary@gmail.com','1 Ave SW','Calgary', 'Alberta','K1N 3J7',5,'403-301-0011',4),
 (28,'Westin Montreal',4,'WestinMontreal@gmail.com','1 Old Montreal Street','Montreal','Quebec','K1N 3G7',5,'514-201-1200',4),
 (29,'Westin Winnipeg',4,'WestinWinnipeg@gmail.com','5 Joy Street','Winnipeg','Manitoba','K1H 8F7',5,'204-555-3535',4);
