@@ -1,6 +1,6 @@
 set search_path='hotel_db';
 
--- ****Create Tables**** -- 
+-- ****Create Tables**** --
 
 -- Create HotelChain Table Query with Primary Keys, Foreign Keys and Constraints
 
@@ -37,7 +37,7 @@ CREATE TABLE Hotel (
 	zipCode VARCHAR(7) NOT NULL,
 	number_of_rooms INTEGER NOT NULL,
 	phone_number VARCHAR(20) NOT NULL,
-	rating INTEGER, 
+	rating INTEGER,
 	CONSTRAINT Hotel_pk PRIMARY KEY (id),
 	CONSTRAINT id_check CHECK (id >= 0),
 	CONSTRAINT number_of_rooms_check CHECK (number_of_rooms >= 0),
@@ -56,7 +56,7 @@ CREATE TABLE Employee (
 	id INTEGER NOT NULL,
 	employed_at INTEGER NOT NULL,
 	first_name VARCHAR(30) NOT NULL,
-	last_name VARCHAR(30) NOT NULL, 
+	last_name VARCHAR(30) NOT NULL,
 	email_address VARCHAR(50) NOT NULL,
 	street VARCHAR(50) NOT NULL,
 	city VARCHAR(30) NOT NULL,
@@ -103,7 +103,7 @@ CREATE TABLE HotelRoom (
 	amenities INTEGER NOT NULL,
 	CONSTRAINT capacity_range CHECK (capacity >=2 and capacity <= 7),
 	CONSTRAINT price_range CHECK (price>=0),
-	CONSTRAINT amenities_fkey FOREIGN KEY (amenities) 
+	CONSTRAINT amenities_fkey FOREIGN KEY (amenities)
 	REFERENCES Amenities (amenities_RoomKey) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE,
 	CONSTRAINT hotel_fkey FOREIGN KEY (hotel)
 	REFERENCES Hotel (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE,
@@ -143,13 +143,14 @@ CREATE TABLE Customer (
   card_number VARCHAR(19) NOT NULL,
   expiration_month int NOT NULL,
   experation_year int NOT NULL,
+	phone_number VARCHAR(20) NOT NULL,
   CONSTRAINT check_month CHECK (expiration_month > 0 AND expiration_month < 13),
   CONSTRAINT check_year CHECK (experation_year >= 2021),
-  CONSTRAINT check_securityCode CHECK (securityCode >= 001 and securityCode <= 999), 
+  CONSTRAINT check_securityCode CHECK (securityCode >= 001 and securityCode <= 999),
   CONSTRAINT check_cardType CHECK (card_type = 'Visa' or card_type = 'Mastercard' or card_type = 'Cash'),
   CONSTRAINT check_province CHECK (province in ('British Columbia','Alberta','Saskatchewan','Manitoba','Ontario','Quebec','New Brunswick','Newfoundland and Labrador','Nova Scotia','Prince Edward Island','Nunavut','Northwest Territories','Yukon')));
 
-	
+
 -- Create BookingInfo Table Query with Primary Keys, Foreign Keys and Constraints
 
 CREATE TABLE BookingInfo (
@@ -158,8 +159,12 @@ CREATE TABLE BookingInfo (
   booking_date timestamp NOT NULL,
   room_type varchar,
   price int,
-  check_in_date timestamp NOT NULL,
-  check_out_date timestamp NOT NULL,
+	check_in_day int NOT NULL,
+	check_in_month int NOT NULL,
+	check_in_year int NOT NULL,
+	check_out_day int NOT NULL,
+	check_out_month int NOT NULL,
+	check_out_year int NOT NULL,
   number_of_occupants int,
   days_booked int,
   hotel_ID int NOT NULL,
@@ -171,6 +176,12 @@ CREATE TABLE BookingInfo (
   CONSTRAINT booking_roomType CHECK (room_type = 'Single' or room_type = 'Double' or room_type = 'Queen' or room_type = 'King' or room_type = 'Triple' or room_type = 'Quad'),
   CONSTRAINT check_bookPrice CHECK (price > 0),
   CONSTRAINT check_bookDays CHECK (days_booked > 0),
+	CONSTRAINT check_CI_day CHECK (check_in_day > 0 and check_in_day < 32),
+	CONSTRAINT check_CI_month CHECK (check_in_month > 0 and check_in_month < 13),
+	CONSTRAINT check_CI_year CHECK (check_in_year > 2020),
+	CONSTRAINT check_CO_day CHECK (check_out_day > 0 and check_out_day < 32),
+	CONSTRAINT check_CO_month CHECK (check_out_month > 0 and check_out_month < 13),
+	CONSTRAINT check_CO_year CHECK (check_out_year > 2020),
   CONSTRAINT check_bookOccupants CHECK (number_of_occupants > 0)
 );
 
@@ -184,8 +195,12 @@ CREATE TABLE Renting (
   renting_date timestamp NOT NULL,
   room_type varchar NOT NULL,
   price int,
-  check_in_date timestamp NOT NULL,
-  check_out_date timestamp NOT NULL,
+	check_in_day int NOT NULL,
+	check_in_month int NOT NULL,
+	check_in_year int NOT NULL,
+	check_out_day int NOT NULL,
+	check_out_month int NOT NULL,
+	check_out_year int NOT NULL,
   days_rented int,
   number_of_occupants int,
   hotel_ID int NOT NULL,
@@ -197,11 +212,16 @@ CREATE TABLE Renting (
   CONSTRAINT roomType CHECK (room_type = 'Single' or room_type = 'Double' or room_type = 'Queen' or room_type = 'King' or room_type = 'Triple' or room_type = 'Quad'),
   CONSTRAINT check_price CHECK (price > 0),
   CONSTRAINT check_days CHECK (days_rented > 0),
+	CONSTRAINT check_CI_day CHECK (check_in_day > 0 and check_in_day < 32),
+	CONSTRAINT check_CI_month CHECK (check_in_month > 0 and check_in_month < 13),
+	CONSTRAINT check_CI_year CHECK (check_in_year > 2020),
+	CONSTRAINT check_CO_day CHECK (check_out_day > 0 and check_out_day < 32),
+	CONSTRAINT check_CO_month CHECK (check_out_month > 0 and check_out_month < 13),
+	CONSTRAINT check_CO_year CHECK (check_out_year > 2020),
   CONSTRAINT check_occupants CHECK (number_of_occupants > 0)
 );
 
-
--- Create Functions and Triggers 
+-- Create Functions and Triggers
 
 --Function that updates number of hotels in hotelChain:
 
@@ -210,7 +230,7 @@ RETURNS TRIGGER AS
 $BODY$
 BEGIN
 
-UPDATE HotelChain  
+UPDATE HotelChain
 SET number_of_hotels = (SELECT count(*)
 FROM Hotel H WHERE H.id = id);
 
@@ -222,7 +242,7 @@ $BODY$ LANGUAGE plpgsql;
 
 --Trigger that runs before a hotel instance is deleted. Calls above function.
 
-CREATE TRIGGER number_of_hotels_trigger 
+CREATE TRIGGER number_of_hotels_trigger
 AFTER UPDATE ON Hotel
 EXECUTE PROCEDURE update_number_of_hotels();
 
@@ -230,7 +250,7 @@ EXECUTE PROCEDURE update_number_of_hotels();
 
 ----- Populate Tables -----
 
--- HotelChain Table 
+-- HotelChain Table
 
 INSERT INTO HotelChain(id,brand_name,email_address,number_of_hotels,headquarters,street,city,province,zipCode,phone_number)
 
@@ -241,7 +261,7 @@ VALUES
 (3,'Holiday Inn','holidayinn@gmail.com',6,'Montreal','17 Ave SW','Calgary','Alberta','K7T 3T4','403-335-0099'),
 (4,'Westin','westin@gmail.com',6,'Calgary','11 Bay Street','Toronto','Ontario','K2F 2T3','416-815-1515');
 
--- Hotel Table 
+-- Hotel Table
 
 --Queries That Inserts Hotels (6 per Chain))
 INSERT INTO Hotel(id,name,hotelChain,email_address,street,city,province,zipCode,number_of_rooms,phone_number,rating)
@@ -326,11 +346,11 @@ VALUES
 (28,28, 'Donnell', 'Mendoza', 'mendoza@gmail.com' , '74 Port Boulevard ',  'Montreal', 'Quebec', 'K3B 2G1', 'Manager', '2016-01-01 00:00:01', null, 95000),
 (29,29, 'Nel', 'Brookes', 'brookes@gmail.com' , '7 King Avenue', 'Winnipeg' , 'Manitoba', 'K3B 2G1', 'Manager','2007-01-01 00:00:01', null, 110500);
 
--- Amenities Table 
+-- Amenities Table
 
 INSERT INTO Amenities (amenities_RoomKey, tv, minibar, fridge, airconditioner, wifi, others)
 
-VALUES 
+VALUES
 (0, FALSE, FALSE, TRUE, TRUE, FALSE, '{}'),
 (1, TRUE, TRUE, TRUE, TRUE, TRUE, '{"jaccuzi", "kitchenette", "living_area", "safe"}'),
 (2, FALSE, FALSE, TRUE, TRUE, TRUE, '{}'),
@@ -511,11 +531,11 @@ VALUES
 (148, TRUE, FALSE, TRUE, TRUE, TRUE, '{}'),
 (149, TRUE, TRUE, TRUE, TRUE, TRUE, '{}');
 
--- HotelRoom Table 
+-- HotelRoom Table
 
 INSERT INTO HotelRoom (room_number, hotel, price, can_be_extended, sea_view, mountain_view, capacity, amenities)
 
-VALUES 
+VALUES
 (0, 0, 200, TRUE, TRUE, FALSE, 2, 0),
 (1, 0, 1000, TRUE, TRUE, TRUE, 2, 1),
 (2, 0, 500, TRUE, TRUE, FALSE, 3, 2),
@@ -697,11 +717,11 @@ VALUES
 (149, 29, 2000, FALSE, TRUE, FALSE, 5,149);
 
 
--- Availability Table 
+-- Availability Table
 
 INSERT INTO Availability (availability_id, hotel_id, room_number, isAvailable)
 
-VALUES 
+VALUES
 (0, 0, 0, TRUE),
 (1, 0, 1, TRUE),
 (2, 0, 2, TRUE),
@@ -885,100 +905,100 @@ VALUES
 -- Cutomer Table
 
 INSERT INTO Customer
-  (id,first_name, last_name, registeration_date, street, city, province, zipCode, securityCode, card_type, card_number, expiration_month, experation_year)
+  (id,first_name, last_name, registeration_date, street, city, province, zipCode, securityCode, card_type, card_number, expiration_month, experation_year, phone_number)
 VALUES
-  (0, 'John', 'Doe', '2004-10-19 10:23:54+02', 'Sarcee Trail', 'Calgary', 'Alberta', 'G6H 9F8', 010, 'Visa', '7451-1100-3204-5672', 8, 2023), 
-  (1, 'Jan', 'Doe', '2004-10-19 10:23:54+02', 'King Edward Avenue', 'Ottawa', 'Ontario', 'B7C 0S8', 140, 'Visa', '1918-1987-7432-0281', 3, 2023), 
-  (2, 'Mike', 'Edward', '2004-10-19 10:23:54+02', 'Quebec Street', 'Monterial', 'Quebec', 'A6D 6J8', 610, 'Mastercard', '3434-8678-1260-1183', 2, 2025), 
-  (3, 'Judy', 'Green', '2004-10-19 10:23:54+02', 'Yonge Street', 'Toronto', 'Ontario', 'K2H 9F5', 019, 'Visa', '6286-0479-1781-9559', 5, 2022), 
-  (6, 'Chandler', 'Rose', '2021-03-07', '17 Street', 'Edmonton', 'Alberta', 'X6V 9P7', 213, 'Mastercard', '3525-5956-3738-2829', 7, 2024);
+  (0, 'John', 'Doe', '2004-10-19 10:23:54+02', 'Sarcee Trail', 'Calgary', 'Alberta', 'G6H 9F8', 010, 'Visa', '7451-1100-3204-5672', 8, 2023,'613-241-1414'),
+  (1, 'Jan', 'Doe', '2004-10-19 10:23:54+02', 'King Edward Avenue', 'Ottawa', 'Ontario', 'B7C 0S8', 140, 'Visa', '1918-1987-7432-0281', 3, 2023,'416-210-1515'),
+  (2, 'Mike', 'Edward', '2004-10-19 10:23:54+02', 'Quebec Street', 'Monterial', 'Quebec', 'A6D 6J8', 610, 'Mastercard', '3434-8678-1260-1183', 2, 2025,'403-301-0011'),
+  (3, 'Judy', 'Green', '2004-10-19 10:23:54+02', 'Yonge Street', 'Toronto', 'Ontario', 'K2H 9F5', 019, 'Visa', '6286-0479-1781-9559', 5, 2022,'204-555-3535'),
+  (6, 'Chandler', 'Rose', '2021-03-07', '17 Street', 'Edmonton', 'Alberta', 'X6V 9P7', 213, 'Mastercard', '3525-5956-3738-2829', 7, 2024,'604-101-1010');
 
--- BookingInfo Table 
+-- BookingInfo Table
 
 INSERT INTO BookingInfo
-  ( confirmation_number, customer_id, booking_date, room_type, price, check_in_date, check_out_date, number_of_occupants, days_booked, hotel_ID, room_number)
+  ( confirmation_number, customer_id, booking_date, room_type, price, check_in_month, check_in_day, check_in_year, check_out_month, check_out_day, check_out_year, number_of_occupants, days_booked, hotel_ID, room_number)
 VALUES
-  (259485837, 0, '2021-03-05', 'Single', 200, '2021-03-15', '2021-03-25', 1, 10, 0, 5), 
-  (631388097, 1, '2021-03-06', 'Double', 300, '2021-03-08', '2021-03-20', 2, 12, 1, 10), 
-  (572145387, 2, '2021-03-07', 'Triple', 400, '2021-03-18', '2021-03-20', 3, 2, 2, 15),
-  (745110007, 3, '2021-03-09', 'King', 700, '2021-03-12', '2021-03-15', 2, 3, 3, 20),
-  (784345857, 6, '2021-03-15', 'Queen', 600, '2021-03-16', '2021-03-20', 2, 4, 4, 25),
+  (259485837, 0, '2021-03-05', 'Single', 200, 3, 5, 2021, 3, 15, 2021, 1, 10, 0, 5),
+  (631388097, 1, '2021-03-06', 'Double', 300, 3, 5, 2021, 3, 15, 2021, 2, 12, 1, 10),
+  (572145387, 2, '2021-03-07', 'Triple', 400, 4, 10, 2021, 3, 15, 2021, 3, 2, 2, 15),
+  (745110007, 3, '2021-03-09', 'King', 700, 5, 10, 2021, 3, 15, 2021, 2, 3, 3, 20),
+  (784345857, 6, '2021-03-15', 'Queen', 600, 6, 10, 2021, 3, 15, 2021, 2, 4, 4, 25),
 
-  (259858346, 0, '2021-03-05', 'Single', 200, '2021-03-15', '2021-03-25', 1, 10, 5, 30), 
-  (633880896, 1, '2021-03-06', 'Double', 300, '2021-03-08', '2021-03-20', 2, 12, 6, 35), 
-  (521458386, 2, '2021-03-07', 'Triple', 400, '2021-03-18', '2021-03-20', 3, 2, 7, 40),
-  (751110006, 3, '2021-03-09', 'King', 700, '2021-03-12', '2021-03-15', 2, 3, 8, 45),
-  (743345856, 6, '2021-03-15', 'Queen', 600, '2021-03-16', '2021-03-20', 2, 4, 9, 50),
+  (259858346, 0, '2021-03-05', 'Single', 200, 3, 5, 2021, 3, 15, 2021, 1, 10, 5, 30),
+  (633880896, 1, '2021-03-06', 'Double', 300, 3, 5, 2021, 3, 15, 2021, 2, 12, 6, 35),
+  (521458386, 2, '2021-03-07', 'Triple', 400, 3, 5, 2021, 3, 15, 2021, 3, 2, 7, 40),
+  (751110006, 3, '2021-03-09', 'King', 700, 3, 5, 2021, 3, 15, 2021, 2, 3, 8, 45),
+  (743345856, 6, '2021-03-15', 'Queen', 600, 3, 5, 2021, 3, 15, 2021, 2, 4, 9, 50),
 
-  (294858345, 0, '2021-03-05', 'Single', 200, '2021-03-15', '2021-03-25', 1, 10, 10, 55), 
-  (613880895, 1, '2021-03-06', 'Double', 300, '2021-03-08', '2021-03-20', 2, 12, 11, 60), 
-  (521458385, 2, '2021-03-07', 'Triple', 400, '2021-03-18', '2021-03-20', 3, 2, 12, 65),
-  (751110005, 3, '2021-03-09', 'King', 700, '2021-03-12', '2021-03-15', 2, 3, 13, 70),
-  (743345855, 6, '2021-03-15', 'Queen', 600, '2021-03-16', '2021-03-20', 2, 4, 14, 75),
-
-
-  (294858344, 0, '2021-03-05', 'Single', 200, '2021-03-15', '2021-03-25', 1, 10, 15, 80), 
-  (613880894, 1, '2021-03-06', 'Double', 300, '2021-03-08', '2021-03-20', 2, 12, 16, 85), 
-  (521458384, 2, '2021-03-07', 'Triple', 400, '2021-03-18', '2021-03-20', 3, 2, 17, 90),
-  (751110004, 3, '2021-03-09', 'King', 700, '2021-03-12', '2021-03-15', 2, 3, 18, 95),
-  (743345854, 6, '2021-03-15', 'Queen', 600, '2021-03-16', '2021-03-20', 2, 4, 19, 100),
+  (294858345, 0, '2021-03-05', 'Single', 200, 3, 5, 2021, 3, 15, 2021, 1, 10, 10, 55),
+  (613880895, 1, '2021-03-06', 'Double', 300, 3, 5, 2021, 3, 15, 2021, 2, 12, 11, 60),
+  (521458385, 2, '2021-03-07', 'Triple', 400, 3, 5, 2021, 3, 15, 2021, 3, 2, 12, 65),
+  (751110005, 3, '2021-03-09', 'King', 700, 3, 5, 2021, 3, 15, 2021, 2, 3, 13, 70),
+  (743345855, 6, '2021-03-15', 'Queen', 600, 3, 5, 2021, 3, 15, 2021, 2, 4, 14, 75),
 
 
-  (259858343, 0, '2021-03-05', 'Single', 200, '2021-03-15', '2021-03-25', 1, 10, 20, 105), 
-  (631880893, 1, '2021-03-06', 'Double', 300, '2021-03-08', '2021-03-20', 2, 12, 21, 110), 
-  (572458383, 2, '2021-03-07', 'Triple', 400, '2021-03-18', '2021-03-20', 3, 2, 22, 115),
-  (745110003, 3, '2021-03-09', 'King', 700, '2021-03-12', '2021-03-15', 2, 3, 23, 120),
-  (784345853, 6, '2021-03-15', 'Queen', 600, '2021-03-16', '2021-03-20', 2, 4, 24, 125),
-  
-    (294858342, 0, '2021-03-05', 'Single', 200, '2021-03-15', '2021-03-25', 1, 10, 25, 130), 
-  (633880892, 1, '2021-03-06', 'Double', 300, '2021-03-08', '2021-03-20', 2, 12, 26, 135), 
-  (571458382, 2, '2021-03-07', 'Triple', 400, '2021-03-18', '2021-03-20', 3, 2, 27, 140),
-  (741110002, 3, '2021-03-09', 'King', 700, '2021-03-12', '2021-03-15', 2, 3, 28, 145),
-  (783345852, 6, '2021-03-15', 'Queen', 600, '2021-03-16', '2021-03-20', 2, 4, 29, 149);
+  (294858344, 0, '2021-03-05', 'Single', 200, 3, 5, 2021, 3, 15, 2021, 1, 10, 15, 80),
+  (613880894, 1, '2021-03-06', 'Double', 300, 3, 5, 2021, 3, 15, 2021, 2, 12, 16, 85),
+  (521458384, 2, '2021-03-07', 'Triple', 400, 3, 5, 2021, 3, 15, 2021, 3, 2, 17, 90),
+  (751110004, 3, '2021-03-09', 'King', 700, 3, 5, 2021, 3, 15, 2021, 2, 3, 18, 95),
+  (743345854, 6, '2021-03-15', 'Queen', 600, 3, 5, 2021, 3, 15, 2021, 2, 4, 19, 100),
+
+
+  (259858343, 0, '2021-03-05', 'Single', 200, 3, 5, 2021, 3, 15, 2021, 1, 10, 20, 105),
+  (631880893, 1, '2021-03-06', 'Double', 300, 3, 5, 2021, 3, 15, 2021, 2, 12, 21, 110),
+  (572458383, 2, '2021-03-07', 'Triple', 400, 3, 5, 2021, 3, 15, 2021, 3, 2, 22, 115),
+  (745110003, 3, '2021-03-09', 'King', 700, 3, 5, 2021, 3, 15, 2021, 2, 3, 23, 120),
+  (784345853, 6, '2021-03-15', 'Queen', 600, 3, 5, 2021, 3, 15, 2021, 2, 4, 24, 125),
+
+  (294858342, 0, '2021-03-05', 'Single', 200, 3, 5, 2021, 3, 15, 2021, 1, 10, 25, 130),
+  (633880892, 1, '2021-03-06', 'Double', 300, 3, 5, 2021, 3, 15, 2021, 2, 12, 26, 135),
+  (571458382, 2, '2021-03-07', 'Triple', 400, 3, 5, 2021, 3, 15, 2021, 3, 2, 27, 140),
+  (741110002, 3, '2021-03-09', 'King', 700, 3, 5, 2021, 3, 15, 2021, 2, 3, 28, 145),
+  (783345852, 6, '2021-03-15', 'Queen', 600, 3, 5, 2021, 3, 15, 2021, 2, 4, 29, 149);
 
 -- Renting Table
 
 INSERT INTO Renting
-  ( confirmation_number, customer_id, renting_date, room_type, price, check_in_date, check_out_date, number_of_occupants, days_rented, hotel_ID, room_number, booking)
+  ( confirmation_number, customer_id, renting_date, room_type, price, check_in_month, check_in_day, check_in_year, check_out_month, check_out_day, check_out_year, number_of_occupants, days_rented, hotel_ID, room_number, booking)
 VALUES
-  (259485837, 0, '2021-03-05', 'Single', 200, '2021-03-15', '2021-03-25', 1, 10, 0, 5, 259485837), 
-  (631388097, 1, '2021-03-06', 'Double', 300, '2021-03-08', '2021-03-20', 2, 12, 1, 10, 631388097), 
-  (572145387, 2, '2021-03-07', 'Triple', 400, '2021-03-18', '2021-03-20', 3, 2, 2, 15, NULL),
-  (745110007, 3, '2021-03-09', 'King', 700, '2021-03-12', '2021-03-15', 2, 3, 3, 20, NULL),
-  (784345857, 6, '2021-03-15', 'Queen', 600, '2021-03-16', '2021-03-20', 2, 4, 4, 25, NULL),
+  (259485837, 0, '2021-03-05', 'Single', 200, 3, 5, 2021, 3, 15, 2021, 1, 10, 0, 5, 259485837),
+  (631388097, 1, '2021-03-06', 'Double', 300, 3, 5, 2021, 3, 15, 2021, 2, 12, 1, 10, 631388097),
+  (572145387, 2, '2021-03-07', 'Triple', 400, 3, 5, 2021, 3, 15, 2021, 3, 2, 2, 15, NULL),
+  (745110007, 3, '2021-03-09', 'King', 700, 3, 5, 2021, 3, 15, 2021, 2, 3, 3, 20, NULL),
+  (784345857, 6, '2021-03-15', 'Queen', 600, 3, 5, 2021, 3, 15, 2021, 2, 4, 4, 25, NULL),
 
-  (259858346, 0, '2021-03-05', 'Single', 200, '2021-03-15', '2021-03-25', 1, 10, 5, 30, NULL), 
-  (633880896, 1, '2021-03-06', 'Double', 300, '2021-03-08', '2021-03-20', 2, 12, 6, 35, NULL), 
-  (521458386, 2, '2021-03-07', 'Triple', 400, '2021-03-18', '2021-03-20', 3, 2, 7, 40, 521458386),
-  (751110006, 3, '2021-03-09', 'King', 700, '2021-03-12', '2021-03-15', 2, 3, 8, 45, NULL),
-  (743345856, 6, '2021-03-15', 'Queen', 600, '2021-03-16', '2021-03-20', 2, 4, 9, 50, NULL),
+  (259858346, 0, '2021-03-05', 'Single', 200, 3, 5, 2021, 3, 15, 2021, 1, 10, 5, 30, NULL),
+  (633880896, 1, '2021-03-06', 'Double', 300, 3, 5, 2021, 3, 15, 2021, 2, 12, 6, 35, NULL),
+  (521458386, 2, '2021-03-07', 'Triple', 400, 3, 5, 2021, 3, 15, 2021, 3, 2, 7, 40, 521458386),
+  (751110006, 3, '2021-03-09', 'King', 700, 3, 5, 2021, 3, 15, 2021, 2, 3, 8, 45, NULL),
+  (743345856, 6, '2021-03-15', 'Queen', 600, 3, 5, 2021, 3, 15, 2021, 2, 4, 9, 50, NULL),
 
-  (294858345, 0, '2021-03-05', 'Single', 200, '2021-03-15', '2021-03-25', 1, 10, 10, 55, NULL), 
-  (613880895, 1, '2021-03-06', 'Double', 300, '2021-03-08', '2021-03-20', 2, 12, 11, 60, NULL), 
-  (521458385, 2, '2021-03-07', 'Triple', 400, '2021-03-18', '2021-03-20', 3, 2, 12, 65, NULL),
-  (751110005, 3, '2021-03-09', 'King', 700, '2021-03-12', '2021-03-15', 2, 3, 13, 70, 751110005),
-  (743345855, 6, '2021-03-15', 'Queen', 600, '2021-03-16', '2021-03-20', 2, 4, 14, 75, 743345855),
-
-
-  (294858344, 0, '2021-03-05', 'Single', 200, '2021-03-15', '2021-03-25', 1, 10, 15, 80, NULL), 
-  (613880894, 1, '2021-03-06', 'Double', 300, '2021-03-08', '2021-03-20', 2, 12, 16, 85, 613880894), 
-  (521458384, 2, '2021-03-07', 'Triple', 400, '2021-03-18', '2021-03-20', 3, 2, 17, 90, NULL),
-  (751110004, 3, '2021-03-09', 'King', 700, '2021-03-12', '2021-03-15', 2, 3, 18, 95, NULL),
-  (743345854, 6, '2021-03-15', 'Queen', 600, '2021-03-16', '2021-03-20', 2, 4, 19, 100, NULL),
+  (294858345, 0, '2021-03-05', 'Single', 200, 3, 5, 2021, 3, 15, 2021, 1, 10, 10, 55, NULL),
+  (613880895, 1, '2021-03-06', 'Double', 300, 3, 5, 2021, 3, 15, 2021, 2, 12, 11, 60, NULL),
+  (521458385, 2, '2021-03-07', 'Triple', 400, 3, 5, 2021, 3, 15, 2021, 3, 2, 12, 65, NULL),
+  (751110005, 3, '2021-03-09', 'King', 700, 3, 5, 2021, 3, 15, 2021, 2, 3, 13, 70, 751110005),
+  (743345855, 6, '2021-03-15', 'Queen', 600, 3, 5, 2021, 3, 15, 2021, 2, 4, 14, 75, 743345855),
 
 
-  (259858343, 0, '2021-03-05', 'Single', 200, '2021-03-15', '2021-03-25', 1, 10, 20, 105, NULL), 
-  (631880893, 1, '2021-03-06', 'Double', 300, '2021-03-08', '2021-03-20', 2, 12, 21, 110, NULL), 
-  (572458383, 2, '2021-03-07', 'Triple', 400, '2021-03-18', '2021-03-20', 3, 2, 22, 115, NULL),
-  (745110003, 3, '2021-03-09', 'King', 700, '2021-03-12', '2021-03-15', 2, 3, 23, 120, 745110003),
-  (784345853, 6, '2021-03-15', 'Queen', 600, '2021-03-16', '2021-03-20', 2, 4, 24, 125, NULL),
-  
-  (294858342, 0, '2021-03-05', 'Single', 200, '2021-03-15', '2021-03-25', 1, 10, 25, 130, NULL), 
-  (633880892, 1, '2021-03-06', 'Double', 300, '2021-03-08', '2021-03-20', 2, 12, 26, 135, NULL), 
-  (571458382, 2, '2021-03-07', 'Triple', 400, '2021-03-18', '2021-03-20', 3, 2, 27, 140, NULL),
-  (741110002, 3, '2021-03-09', 'King', 700, '2021-03-12', '2021-03-15', 2, 3, 28, 145, NULL),
-  (783345852, 6, '2021-03-15', 'Queen', 600, '2021-03-16', '2021-03-20', 2, 4, 29, 149, 783345852);
-  
+  (294858344, 0, '2021-03-05', 'Single', 200, 3, 5, 2021, 3, 15, 2021, 1, 10, 15, 80, NULL),
+  (613880894, 1, '2021-03-06', 'Double', 300, 3, 5, 2021, 3, 15, 2021, 2, 12, 16, 85, 613880894),
+  (521458384, 2, '2021-03-07', 'Triple', 400, 12, 10, 2021, 3, 15, 2021, 3, 2, 17, 90, NULL),
+  (751110004, 3, '2021-03-09', 'King', 700, 3, 5, 2021, 3, 15, 2021, 2, 3, 18, 95, NULL),
+  (743345854, 6, '2021-03-15', 'Queen', 600, 3, 5, 2021, 3, 15, 2021, 2, 4, 19, 100, NULL),
+
+
+  (259858343, 0, '2021-03-05', 'Single', 200, 3, 5, 2021, 3, 15, 2021, 1, 10, 20, 105, NULL),
+  (631880893, 1, '2021-03-06', 'Double', 300, 6, 10, 2021, 3, 15, 2021, 2, 12, 21, 110, NULL),
+  (572458383, 2, '2021-03-07', 'Triple', 400, 7, 10, 2021, 3, 15, 2021, 3, 2, 22, 115, NULL),
+  (745110003, 3, '2021-03-09', 'King', 700, 4, 10, 2021, 3, 15, 2021, 2, 3, 23, 120, 745110003),
+  (784345853, 6, '2021-03-15', 'Queen', 600, 3, 5, 2021, 3, 15, 2021, 2, 4, 24, 125, NULL),
+
+  (294858342, 0, '2021-03-05', 'Single', 200, 3, 5, 2021, 3, 15, 2021, 1, 10, 25, 130, NULL),
+  (633880892, 1, '2021-03-06', 'Double', 300, 3, 5, 2021, 3, 15, 2021, 2, 12, 26, 135, NULL),
+  (571458382, 2, '2021-03-07', 'Triple', 400, 3, 5, 2021, 3, 15, 2021, 3, 2, 27, 140, NULL),
+  (741110002, 3, '2021-03-09', 'King', 700, 3, 5, 2021, 3, 15, 2021, 2, 3, 28, 145, NULL),
+  (783345852, 6, '2021-03-15', 'Queen', 600, 3, 5, 2021, 3, 15, 2021, 2, 4, 29, 149, 783345852)
+
 
 ----- Example of Commonly used Queries -----
 ----- Update Address Query -----
@@ -990,4 +1010,3 @@ VALUES
 ----- Modifications -----
 --alter table customer add  CONSTRAINT check_province CHECK (province in ('British Columbia','Alberta','Saskatchewan','Manitoba','Ontario','Quebec','New Brunswick','Newfoundland and Labrador','Nova Scotia','Prince Edward Island','Nunavut','Northwest Territories','Yukon'));
 --Alter Table customer Alter Column card_number Type BIGINT;
-
