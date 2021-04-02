@@ -1,6 +1,6 @@
 set search_path='hotel_db';
 
--- ****Create Tables**** -- 
+-- ****Create Tables**** --
 
 -- Create HotelChain Table Query with Primary Keys, Foreign Keys and Constraints
 
@@ -37,7 +37,7 @@ CREATE TABLE Hotel (
 	zipCode VARCHAR(7) NOT NULL,
 	number_of_rooms INTEGER NOT NULL,
 	phone_number VARCHAR(20) NOT NULL,
-	rating INTEGER, 
+	rating INTEGER,
 	CONSTRAINT Hotel_pk PRIMARY KEY (id),
 	CONSTRAINT id_check CHECK (id >= 0),
 	CONSTRAINT number_of_rooms_check CHECK (number_of_rooms >= 0),
@@ -56,7 +56,7 @@ CREATE TABLE Employee (
 	id INTEGER NOT NULL,
 	employed_at INTEGER NOT NULL,
 	first_name VARCHAR(30) NOT NULL,
-	last_name VARCHAR(30) NOT NULL, 
+	last_name VARCHAR(30) NOT NULL,
 	email_address VARCHAR(50) NOT NULL,
 	street VARCHAR(50) NOT NULL,
 	city VARCHAR(30) NOT NULL,
@@ -103,7 +103,7 @@ CREATE TABLE HotelRoom (
 	amenities INTEGER NOT NULL,
 	CONSTRAINT capacity_range CHECK (capacity >=2 and capacity <= 7),
 	CONSTRAINT price_range CHECK (price>=0),
-	CONSTRAINT amenities_fkey FOREIGN KEY (amenities) 
+	CONSTRAINT amenities_fkey FOREIGN KEY (amenities)
 	REFERENCES Amenities (amenities_RoomKey) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE,
 	CONSTRAINT hotel_fkey FOREIGN KEY (hotel)
 	REFERENCES Hotel (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE,
@@ -143,13 +143,14 @@ CREATE TABLE Customer (
   card_number VARCHAR(19) NOT NULL,
   expiration_month int NOT NULL,
   experation_year int NOT NULL,
+	phone_number VARCHAR(20) NOT NULL,
   CONSTRAINT check_month CHECK (expiration_month > 0 AND expiration_month < 13),
   CONSTRAINT check_year CHECK (experation_year >= 2021),
-  CONSTRAINT check_securityCode CHECK (securityCode >= 001 and securityCode <= 999), 
+  CONSTRAINT check_securityCode CHECK (securityCode >= 001 and securityCode <= 999),
   CONSTRAINT check_cardType CHECK (card_type = 'Visa' or card_type = 'Mastercard' or card_type = 'Cash'),
   CONSTRAINT check_province CHECK (province in ('British Columbia','Alberta','Saskatchewan','Manitoba','Ontario','Quebec','New Brunswick','Newfoundland and Labrador','Nova Scotia','Prince Edward Island','Nunavut','Northwest Territories','Yukon')));
 
-	
+
 -- Create BookingInfo Table Query with Primary Keys, Foreign Keys and Constraints
 
 CREATE TABLE BookingInfo (
@@ -158,8 +159,12 @@ CREATE TABLE BookingInfo (
   booking_date timestamp NOT NULL,
   room_type varchar,
   price int,
-  check_in_date timestamp NOT NULL,
-  check_out_date timestamp NOT NULL,
+	check_in_day int NOT NULL,
+	check_in_month int NOT NULL,
+	check_in_year int NOT NULL,
+	check_out_day int NOT NULL,
+	check_out_month int NOT NULL,
+	check_out_year int NOT NULL,
   number_of_occupants int,
   days_booked int,
   hotel_ID int NOT NULL,
@@ -171,6 +176,12 @@ CREATE TABLE BookingInfo (
   CONSTRAINT booking_roomType CHECK (room_type = 'Single' or room_type = 'Double' or room_type = 'Queen' or room_type = 'King' or room_type = 'Triple' or room_type = 'Quad'),
   CONSTRAINT check_bookPrice CHECK (price > 0),
   CONSTRAINT check_bookDays CHECK (days_booked > 0),
+	CONSTRAINT check_CI_day CHECK (check_in_day > 0 and check_in_day < 32),
+	CONSTRAINT check_CI_month CHECK (check_in_month > 0 and check_in_month < 13),
+	CONSTRAINT check_CI_year CHECK (check_in_year > 2020),
+	CONSTRAINT check_CO_day CHECK (check_out_day > 0 and check_out_day < 32),
+	CONSTRAINT check_CO_month CHECK (check_out_month > 0 and check_out_month < 13),
+	CONSTRAINT check_CO_year CHECK (check_out_year > 2020),
   CONSTRAINT check_bookOccupants CHECK (number_of_occupants > 0)
 );
 
@@ -184,8 +195,12 @@ CREATE TABLE Renting (
   renting_date timestamp NOT NULL,
   room_type varchar NOT NULL,
   price int,
-  check_in_date timestamp NOT NULL,
-  check_out_date timestamp NOT NULL,
+	check_in_day int NOT NULL,
+	check_in_month int NOT NULL,
+	check_in_year int NOT NULL,
+	check_out_day int NOT NULL,
+	check_out_month int NOT NULL,
+	check_out_year int NOT NULL,
   days_rented int,
   number_of_occupants int,
   hotel_ID int NOT NULL,
@@ -197,11 +212,17 @@ CREATE TABLE Renting (
   CONSTRAINT roomType CHECK (room_type = 'Single' or room_type = 'Double' or room_type = 'Queen' or room_type = 'King' or room_type = 'Triple' or room_type = 'Quad'),
   CONSTRAINT check_price CHECK (price > 0),
   CONSTRAINT check_days CHECK (days_rented > 0),
+	CONSTRAINT check_CI_day CHECK (check_in_day > 0 and check_in_day < 32),
+	CONSTRAINT check_CI_month CHECK (check_in_month > 0 and check_in_month < 13),
+	CONSTRAINT check_CI_year CHECK (check_in_year > 2020),
+	CONSTRAINT check_CO_day CHECK (check_out_day > 0 and check_out_day < 32),
+	CONSTRAINT check_CO_month CHECK (check_out_month > 0 and check_out_month < 13),
+	CONSTRAINT check_CO_year CHECK (check_out_year > 2020),
   CONSTRAINT check_occupants CHECK (number_of_occupants > 0)
 );
 
 
--- Create Functions and Triggers 
+-- Create Functions and Triggers
 
 --Function that updates number of hotels in hotelChain:
 
@@ -210,7 +231,7 @@ RETURNS TRIGGER AS
 $BODY$
 BEGIN
 
-UPDATE HotelChain  
+UPDATE HotelChain
 SET number_of_hotels = (SELECT count(*)
 FROM Hotel H WHERE H.id = id);
 
@@ -222,8 +243,6 @@ $BODY$ LANGUAGE plpgsql;
 
 --Trigger that runs before a hotel instance is deleted. Calls above function.
 
-CREATE TRIGGER number_of_hotels_trigger 
+CREATE TRIGGER number_of_hotels_trigger
 AFTER UPDATE ON Hotel
 EXECUTE PROCEDURE update_number_of_hotels();
-
-
