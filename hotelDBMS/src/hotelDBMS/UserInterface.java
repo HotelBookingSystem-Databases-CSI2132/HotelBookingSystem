@@ -118,7 +118,7 @@ public class UserInterface {
 		try {
 			while(flag) {
 				System.out.println("You have the following options: ");
-				System.out.println("Execute Queries 1 to 8 by typing 'query *queryNum*'");
+				System.out.println("Execute Given Queries 1 to 8 by typing 'query *queryNum*'");
 				System.out.println("Navigate to Renting a room (Directly/Fom booking) by typing 'rent'");
 				System.out.println("Type 'logout' to log out.");
 				String userIn = input.nextLine();
@@ -169,6 +169,7 @@ public class UserInterface {
 					case "logout":
 						flag=false;
 						UI.closeConnection();
+						UI.askCredentials(UI);
 						break;
 				}
 			}
