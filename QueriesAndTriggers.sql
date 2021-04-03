@@ -26,7 +26,7 @@ AFTER UPDATE ON Hotel
 EXECUTE PROCEDURE update_number_of_hotels();
 
 --Function and Trigger 2
-/**
+
 CREATE FUNCTION update_room_availability()
 RETURNS TRIGGER AS
 $BODY$
@@ -49,7 +49,6 @@ AFTER INSERT ON Renting
 FOR EACH ROW
 EXECUTE PROCEDURE update_room_availability()
 
-**/
 
 --Query 1: Finds the minimum price of a hotel that is at least for stars
 
