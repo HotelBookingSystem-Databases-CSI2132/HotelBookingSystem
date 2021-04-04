@@ -246,7 +246,30 @@ CREATE TRIGGER number_of_hotels_trigger
 AFTER UPDATE ON Hotel
 EXECUTE PROCEDURE update_number_of_hotels();
 
+						
+--Function and Trigger 2
 
+CREATE FUNCTION update_room_availability()
+RETURNS TRIGGER AS
+$BODY$
+BEGIN
+
+UPDATE Availability
+SET isAvailable  = FALSE
+WHERE room_number = new.room_number;
+
+RETURN NEW;
+END
+
+$BODY$ LANGUAGE plpgsql;
+
+
+--Trigger that runs after a new renting instance is inserted to update rooms availability. Calls above function.
+
+CREATE TRIGGER update_Availability
+AFTER INSERT ON Renting
+FOR EACH ROW
+EXECUTE PROCEDURE update_room_availability();
 
 ----- Populate Tables -----
 
@@ -954,7 +977,7 @@ VALUES
   (633880892, 1, '2021-03-06', 'Double', 300, 3, 5, 2021, 3, 15, 2021, 2, 12, 26, 135),
   (571458382, 2, '2021-03-07', 'Triple', 400, 3, 5, 2021, 3, 15, 2021, 3, 2, 27, 140),
   (741110002, 3, '2021-03-09', 'King', 700, 3, 5, 2021, 3, 15, 2021, 2, 3, 28, 145),
-  (783345852, 6, '2021-03-15', 'Queen', 600, 3, 5, 2021, 3, 15, 2021, 2, 4, 29, 149);
+  (783345852, 6, '2021-03-15', 'Queen', 600, 3, 5, 2021, 3, 15, 2021, 2, 4, 29, 149),
   
   (259355837, 0, '2021-03-05', 'Single', 200, 3, 5, 2021, 3, 15, 2021, 1, 10, 6, 5),
   (631210097, 1, '2021-03-06', 'Double', 300, 3, 5, 2021, 3, 15, 2021, 2, 12, 6, 10),
