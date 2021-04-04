@@ -2,7 +2,9 @@ package hotelDBMS;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Scanner;
+
 
 public class UserInterface {
 	private Scanner input = new Scanner(System.in);

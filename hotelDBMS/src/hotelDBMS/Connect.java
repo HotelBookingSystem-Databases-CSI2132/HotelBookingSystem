@@ -53,6 +53,10 @@ public class Connect {
 		}
 	}
 	
+	public Connection getConnection(Connect connect) throws SQLException{
+		return connect.dbConnection;
+	}
+	
 	public void printResultSet(ResultSet result) {
 		try{
 			ResultSetMetaData rsMetaData = result.getMetaData();
