@@ -36,15 +36,10 @@ public class Renting {
 		SimpleDateFormat sdf3 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
 		int confirmation_number = confirmationNumber;
-		
 		int customer_id = result.getInt("customer_id");
-		
 		int room_number = result.getInt("room_number");
 		String renting_date = sdf3.format(timestamp);
-		System.out.println("Enter Room Type (Single/Double/Triple/King/Queen): ");
 		String room_type = result.getString("room_type");
-		System.out.println("Enter Price \n "
-				+ "(Single = 200, Double = 300, Triple=400, King=700, Queen=600): ");
 		int price = result.getInt("price");
 		
 		int check_in_day = result.getInt("check_in_day"); 
@@ -77,13 +72,17 @@ public class Renting {
 //		SimpleDateFormat sdf4 = new SimpleDateFormat("MM");
 //		
 //		Scanner input = new Scanner(System.in);
+//		
 //		System.out.println("Enter Information for Renting: ");
 //		System.out.println("Customer ID: ");
 //		String customer_id = input.nextLine();
-//		String confirmation_number;
+//		System.out.println("Enter Room Number: ");
 //		int room_number = input.nextInt();
+//		System.out.println("Enter Room Type (Single/Double/Triple/King/Queen): ");
+//		String room_type = input.nextLine();
 //		String renting_date = sdf1.format(timestamp);
-//		String room_type = input.nextLine();;
+//		System.out.println("Enter Price \n "
+//				+ "(Single = 200, Double = 300, Triple=400, King=700, Queen=600): ");
 //		int price = input.nextInt();
 //		int check_in_day = Integer.parseInt(sdf3.format(timestamp)); 
 //		int check_in_month = Integer.parseInt(sdf4.format(timestamp));
@@ -94,7 +93,6 @@ public class Renting {
 //		int days_rented = input.nextInt();
 //		int number_of_occupants = input.nextInt();
 //		int hotel_ID = input.nextInt();
-//		String booking;
 //		String rentingInfo = (confirmation_number+","+customer_id+","+room_number+","+renting_date+","+
 //		room_type+","+price+","+check_in_day+","+check_in_month+","+check_in_year+","+check_out_day+","+
 //				check_out_month+","+check_out_year+","+days_rented+","+number_of_occupants+","+
