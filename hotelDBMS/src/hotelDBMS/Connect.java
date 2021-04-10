@@ -62,15 +62,16 @@ public class Connect {
 			ResultSetMetaData rsMetaData = result.getMetaData();
 			int numColumns = rsMetaData.getColumnCount();
 			for(int i = 1; i<=numColumns; i++) {
-				System.out.print(rsMetaData.getColumnLabel(i)+"\t");
+				System.out.print(rsMetaData.getColumnLabel(i)+"  |\t");
 			}
+			System.out.println();
 			while(result.next()) {
 				for(int i = 1; i<=numColumns; i++) {
 					if(i%numColumns == 1) {
 						System.out.println();
 					}
 					String toPrint = String.format("%1$" + rsMetaData.getColumnLabel(i).length() + "s", result.getString(i));
-					System.out.print(toPrint + "\t");
+					System.out.print(toPrint + "  |\t");
 				}
 			}
 			System.out.println();
