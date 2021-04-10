@@ -69,10 +69,12 @@ public class Connect {
 					if(i%numColumns == 1) {
 						System.out.println();
 					}
-					
-					System.out.print(result.getString(i) + "\t");
+					String toPrint = String.format("%1$" + rsMetaData.getColumnLabel(i).length() + "s", result.getString(i));
+					System.out.print(toPrint + "\t");
 				}
 			}
+			System.out.println();
+			System.out.println();
 			
 		}catch(SQLException ex) {
 			 System.out.println(ex.getMessage());
