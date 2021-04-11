@@ -6,9 +6,9 @@ import java.sql.Connection;
 public class Connect {
 
 
-//	private String hostName = ""; 
-//	private String passWord = "";
-//	private String url = "jdbc:postgresql://web0.site.uottawa.ca:15432/group_b02_g52";
+	private String hostName = "srekh085"; 
+	private String passWord = "SecondRent@25";
+	private String url = "jdbc:postgresql://web0.site.uottawa.ca:15432/group_b02_g52";
 	private String schema = "hotel_db";
 	
 	private Connection dbConnection;
@@ -16,7 +16,7 @@ public class Connect {
 	
 	
 	Connect(String url, String hostName, String passWord) throws SQLException{
-		dbConnection = DriverManager.getConnection(url, hostName, passWord);
+		dbConnection = DriverManager.getConnection(this.url, this.hostName, this.passWord);
 	}
 	public void closeConnection() {
 		try{

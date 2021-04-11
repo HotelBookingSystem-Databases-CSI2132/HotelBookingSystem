@@ -169,7 +169,7 @@ public class Renting {
 				String card_number = input.nextLine();
 				System.out.println("\t Enter Expiration Month (MM): ");
 				String expiration_month = input.nextLine();
-				System.out.println("\t Enter Expiration Month (YY): ");
+				System.out.println("\t Enter Expiration Month (YYYY): ");
 				String expiration_year = input.nextLine();
 				System.out.println("ENter Phone Number: ");
 				System.out.println("Format: XXX-XXX-XXXX");
@@ -180,7 +180,7 @@ public class Renting {
 				System.out.println(SQL);
 				dbConnection.insertInto("Customer", new String[] {SQL});
 				ResultSet res = dbConnection.getResultSet("Select * from hotel_db.Customer"
-						+ "where id="+customer_id+";");
+						+ " where id = "+customer_id+";");
 				System.out.println("Customer Information added: ");
 				dbConnection.printResultSet(res);
 			}catch(SQLException ex) {
@@ -228,12 +228,12 @@ public class Renting {
 		int days_booked = input.nextInt();
 		System.out.println("Enter number of Occupants: ");
 		int number_of_occupants = input.nextInt();
-		String rentingInfo = ("("+confirmation_number+","+customer_id+","+room_number+", '"+booking_date+"' , '"+
+		String rentingInfo = ("("+confirmation_number+","+customer_id+", '"+booking_date+"' , '"+
 		room_type+"' ,"+price+","+check_in_day+","+check_in_month+","+check_in_year+","+check_out_day+","+
-				check_out_month+","+check_out_year+","+days_booked+","+number_of_occupants+","+
-				hotelID+")");
+				check_out_month+","+check_out_year+","+number_of_occupants+","+days_booked+","+
+				hotelID+","+room_number+")");
 		String[] query = new String[] {rentingInfo};
-//		System.out.println(rentingInfo);
+		System.out.println(rentingInfo);
 		dbConnection.insertInto("BookingInfo", query);
 	}
 	
