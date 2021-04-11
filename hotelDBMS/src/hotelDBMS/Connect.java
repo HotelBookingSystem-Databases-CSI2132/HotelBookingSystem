@@ -6,9 +6,9 @@ import java.sql.Connection;
 public class Connect {
 
 
-//	private String hostName = "srekh085"; 
-//	private String passWord = "BlackChair@2020";
-//	private String url = "jdbc:postgresql://web0.site.uottawa.ca:15432/srekh085";
+//	private String hostName = ""; 
+//	private String passWord = "";
+//	private String url = "jdbc:postgresql://web0.site.uottawa.ca:15432/group_b02_g52";
 	private String schema = "hotel_db";
 	
 	private Connection dbConnection;
@@ -52,7 +52,63 @@ public class Connect {
 			 System.out.println(ex.getMessage());
 		}
 	}
+	public void update(String tableName, String attribute, String value, String id) {
+		try{
+			Connection db = dbConnection;
+			Statement st = db.createStatement();
+			System.out.print("UPDATE "+schema+"."+tableName+" Set "+attribute+"='"+value+"' Where id ="+id+";");
+			String SQL = ("UPDATE "+schema+"."+tableName+" Set "+attribute+"='"+value+"' Where id ="+id+";");
+			st.executeQuery(SQL);
+			System.out.println("Insert Complete");
+			db.close();
+		}catch(SQLException ex) {
+			 System.out.println(ex.getMessage());
+		}
+	}
 	
+	/*
+	 * UPDATE table_name SET column1 = value1, column2 = value2, ... WHERE
+	 * condition;
+	 */
+	
+	public void deleteFrom(String tableName, String id) {
+		try{
+			Connection db = dbConnection;
+			Statement st = db.createStatement();
+			String SQL = ("DELETE From "+schema+"."+tableName+" Where id="+id+";");
+			st.executeQuery(SQL);
+			System.out.println("Insert Complete");
+			db.close();
+		}catch(SQLException ex) {
+			 System.out.println(ex.getMessage());
+		}
+	}
+	
+	public void deleteFromRoom(String tableName, String id) {
+		try{
+			Connection db = dbConnection;
+			Statement st = db.createStatement();
+			String SQL = ("DELETE From "+schema+"."+tableName+" Where room_number="+id+";");
+			st.executeQuery(SQL);
+			System.out.println("Insert Complete");
+			db.close();
+		}catch(SQLException ex) {
+			 System.out.println(ex.getMessage());
+		}
+	}
+	
+	public void deleteFromCustomer(String tableName, String fn, String ln) {
+		try{
+			Connection db = dbConnection;
+			Statement st = db.createStatement();
+			String SQL = ("DELETE From "+schema+"."+tableName+" Where first_name='"+fn+"' and last_name='"+ln+"';");
+			st.executeQuery(SQL);
+			System.out.println("Insert Complete");
+			db.close();
+		}catch(SQLException ex) {
+			 System.out.println(ex.getMessage());
+		}
+	}
 	public Connection getConnection(Connect connect) throws SQLException{
 		return connect.dbConnection;
 	}
